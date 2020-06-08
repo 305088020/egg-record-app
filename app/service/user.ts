@@ -1,5 +1,5 @@
 // app/service/user.js
-import { Service } from 'egg';
+import { Service } from "egg";
 
 class UserService extends Service {
   // 默认不需要提供构造函数。
@@ -10,7 +10,10 @@ class UserService extends Service {
   // }
   async find(uid) {
     // 假如 我们拿到用户 id 从数据库获取用户详细信息
-    const user = await this.ctx.db.query('select * from user where uid = ?', uid);
+    const user = await this.ctx.db.query(
+      "select * from user where uid = ?",
+      uid
+    );
 
     // 假定这里还有一些复杂的计算，然后返回需要的信息。
     const picture = await this.getPicture(uid);
@@ -23,7 +26,9 @@ class UserService extends Service {
   }
 
   async getPicture(uid) {
-    const result = await this.ctx.curl(`http://photoserver/uid=${uid}`, { dataType: 'json' });
+    const result = await this.ctx.curl(`http://photoserver/uid=${uid}`, {
+      dataType: "json",
+    });
     return result.data;
   }
 
@@ -35,10 +40,9 @@ class UserService extends Service {
     return `hi, ${name}`;
   }
 
-
-  public async findByUsername(username){
+  public async findByUsername(username) {
     const ctx = this.ctx;
-     return await ctx.model.User.findOne({where:{name:username}});
+    return await ctx.model.User.findOne({ where: { username: username } });
   }
 }
 module.exports = UserService;
