@@ -2,12 +2,16 @@
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
-import ExportCustomer = require('../../../app/model/customer');
-import ExportUser = require('../../../app/model/user');
+import ExportCustomer from '../../../app/model/customer';
+import ExportDisease from '../../../app/model/disease';
+import ExportUser from '../../../app/model/user';
+import ExportWechat from '../../../app/model/wechat';
 
 declare module 'egg' {
   interface IModel {
     Customer: ReturnType<typeof ExportCustomer>;
+    Disease: ReturnType<typeof ExportDisease>;
     User: ReturnType<typeof ExportUser>;
+    Wechat: ReturnType<typeof ExportWechat>;
   }
 }
