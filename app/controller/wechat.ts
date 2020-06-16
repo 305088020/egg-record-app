@@ -18,11 +18,10 @@ export default class WechatController extends Controller {
   }
   async create() {
     const ctx = this.ctx;
-    const { wechat, user_id, created_at } = ctx.request.body;
+    const { wechat, user_id } = ctx.request.body;
     const model = await ctx.model.Wechat.create({
       wechat,
       user_id,
-      created_at,
     });
     ctx.status = 201;
     ctx.body = model;
