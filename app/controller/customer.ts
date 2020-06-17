@@ -1,4 +1,6 @@
 import { Controller } from "egg";
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 function toInt(str) {
   if (typeof str === "number") return str;
@@ -38,20 +40,38 @@ export default class CustomerController extends Controller {
         },
       ],
     };
+    let where1 = {};
     if (
       ctx.query.user_id !== null &&
       typeof ctx.query.user_id !== "undefined" &&
       ctx.query.user_id !== "undefined"
     ) {
-      query["where"] = { user_id: ctx.query.user_id };
+      where1["user_id"] = ctx.query.user_id;
     }
+
+    const search = ctx.query.search;
+    console.log(query);
+    let where2 = {};
+    if (search != null && search != "" && search !== "undefined") {
+      where2 = {
+        [Op.or]: [
+          { name: { [Op.like]: "%" + search + "%" } },
+          { wechat: { [Op.like]: "%" + search + "%" } },
+        ],
+      };
+    }
+    if (where1 || where1) {
+      query["where"] = Object.assign(where1, where2);
+    }
+
     const order = ctx.query.sort;
+
     if (order != null) {
       query["order"] = [order.split(",")];
     } else {
       query["order"] = [["id", "DESC"]];
     }
-
+    console.log(query);
     const count = await ctx.model.Customer.count(query);
     const data = await ctx.model.Customer.findAll(query);
     ctx.body = {
@@ -74,11 +94,23 @@ export default class CustomerController extends Controller {
       address,
       disease,
       wechat,
+      deal,
       remark,
       date,
       user_id,
     } = ctx.request.body;
     console.log(name + user_id);
+    // 微信一样的不能添加
+    const someOneCount = await ctx.model.Customer.count({
+      where: {
+        wechat: wechat,
+      },
+    });
+    if (someOneCount >= 1) {
+      ctx.status = 500;
+      ctx.body = { message: "已添加过" };
+      return;
+    }
     const customer = await ctx.model.Customer.create({
       name,
       age,
@@ -86,6 +118,7 @@ export default class CustomerController extends Controller {
       address,
       disease,
       wechat,
+      deal,
       remark,
       date,
       user_id,
@@ -110,6 +143,7 @@ export default class CustomerController extends Controller {
       address,
       disease,
       wechat,
+      deal,
       remark,
       date,
     } = ctx.request.body;
@@ -120,6 +154,7 @@ export default class CustomerController extends Controller {
       address,
       disease,
       wechat,
+      deal,
       remark,
       date,
     });

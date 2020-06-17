@@ -17,6 +17,7 @@ module.exports = (app) => {
     wechat: STRING(),
     //客服微信
     customer_wechat: STRING(),
+    deal: STRING(),
     remark: STRING(),
     date: DATE,
     user_id: INTEGER,
