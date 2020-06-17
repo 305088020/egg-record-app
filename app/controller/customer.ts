@@ -147,6 +147,17 @@ export default class CustomerController extends Controller {
       remark,
       date,
     } = ctx.request.body;
+    // 微信一样的不能添加
+    const someOneCount = await ctx.model.Customer.count({
+      where: {
+        wechat: wechat,
+      },
+    });
+    if (someOneCount >= 1) {
+      ctx.status = 500;
+      ctx.body = { message: "已添加过" };
+      return;
+    }
     await customer.update({
       name,
       age,
