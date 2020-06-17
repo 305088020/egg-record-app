@@ -151,11 +151,14 @@ export default class CustomerController extends Controller {
     const someOneCount = await ctx.model.Customer.count({
       where: {
         wechat: wechat,
+        id: {
+          [Op.ne]: id,
+        },
       },
     });
     if (someOneCount >= 1) {
       ctx.status = 500;
-      ctx.body = { message: "已添加过" };
+      ctx.body = { message: "患者微信号重复" };
       return;
     }
     await customer.update({
