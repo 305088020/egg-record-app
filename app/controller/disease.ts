@@ -10,8 +10,12 @@ export default class DiseaseController extends Controller {
   async index() {
     const ctx = this.ctx;
     let currentPage = toInt(ctx.query.currentPage);
-    let offset = (currentPage - 1) * 10;
-    const query = { limit: toInt(ctx.query.limit), offset: offset };
+    let limit = toInt(ctx.query.limit);
+    let offset = (currentPage - 1) * limit;
+    const query = {
+      limit: limit,
+      offset: offset,
+    };
     const order = ctx.query.sort;
     if (order != null) {
       query["order"] = [order.split(",")];

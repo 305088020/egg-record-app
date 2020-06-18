@@ -1,35 +1,35 @@
-import { Controller } from 'egg';
-
-
+import { Controller } from "egg";
 
 function toInt(str) {
-  if (typeof str === 'number') return str;
+  if (typeof str === "number") return str;
   if (!str) return str;
   return parseInt(str, 10) || 0;
 }
 
 export default class UserController extends Controller {
-
   async index() {
     const ctx = this.ctx;
     let currentPage = toInt(ctx.query.currentPage);
-    let offset = (currentPage - 1) * 10;
-    const query = { limit: toInt(ctx.query.limit), offset: offset, };
+    let limit = toInt(ctx.query.limit);
+    let offset = (currentPage - 1) * limit;
+    const query = {
+      limit: limit,
+      offset: offset,
+    };
     const order = ctx.query.sort;
-    if(order != null){
-      query['order'] = [order.split(',')];
-    }else{
-      query['order'] = [['id', 'DESC']];
+    if (order != null) {
+      query["order"] = [order.split(",")];
+    } else {
+      query["order"] = [["id", "DESC"]];
     }
 
     const count = await ctx.model.User.count(query);
     const data = await ctx.model.User.findAll(query);
-    ctx.body ={
+    ctx.body = {
       count: count,
-      data:data
-    }
+      data: data,
+    };
     // ctx.body = await ctx.service.test.findByUsername("nihao");
-    
   }
 
   async show() {
@@ -37,15 +37,20 @@ export default class UserController extends Controller {
     ctx.body = await ctx.model.User.findByPk(toInt(ctx.params.id));
   }
 
-  async findByUsername(username){
+  async findByUsername(username) {
     const ctx = this.ctx;
-     return ctx.model.User.findOne({where:{username:username}});
+    return ctx.model.User.findOne({ where: { username: username } });
   }
 
   async create() {
     const ctx = this.ctx;
-    const { username, password,name,created_at } = ctx.request.body;
-    const user = await ctx.model.User.create({ username, password,name,created_at });
+    const { username, password, name, created_at } = ctx.request.body;
+    const user = await ctx.model.User.create({
+      username,
+      password,
+      name,
+      created_at,
+    });
     ctx.status = 201;
     ctx.body = user;
   }
@@ -59,8 +64,8 @@ export default class UserController extends Controller {
       return;
     }
 
-    const { username, password,name } = ctx.request.body;
-    await user.update({ username, password,name });
+    const { username, password, name } = ctx.request.body;
+    await user.update({ username, password, name });
     ctx.body = user;
   }
 

@@ -30,9 +30,10 @@ export default class CustomerController extends Controller {
   async index() {
     const ctx = this.ctx;
     let currentPage = toInt(ctx.query.currentPage);
-    let offset = (currentPage - 1) * 10;
+    let limit = toInt(ctx.query.limit);
+    let offset = (currentPage - 1) * limit;
     const query = {
-      limit: toInt(ctx.query.limit),
+      limit: limit,
       offset: offset,
       include: [
         {
