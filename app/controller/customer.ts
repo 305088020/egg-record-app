@@ -1,6 +1,8 @@
 import { Controller } from "egg";
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+// Load the full build.
+var _ = require("lodash");
 
 function toInt(str) {
   if (typeof str === "number") return str;
@@ -32,7 +34,7 @@ export default class CustomerController extends Controller {
     let currentPage = toInt(ctx.query.currentPage);
     let limit = toInt(ctx.query.limit);
     let offset = (currentPage - 1) * limit;
-    const query = {
+    const query: any = {
       limit: limit,
       offset: offset,
       include: [
@@ -40,37 +42,68 @@ export default class CustomerController extends Controller {
           model: ctx.model.User,
         },
       ],
+      where: {},
     };
-    let where1 = {};
-    if (
-      ctx.query.user_id !== null &&
-      typeof ctx.query.user_id !== "undefined" &&
-      ctx.query.user_id !== "undefined"
-    ) {
-      where1["user_id"] = ctx.query.user_id;
-    }
 
-    const search = ctx.query.search;
-    console.log(query);
-    let where2 = {};
-    if (search != null && search != "" && search !== "undefined") {
-      where2 = {
+    const where: any = {};
+    if (ctx.query.user_id) {
+      where["user_id"] = ctx.query.user_id;
+    }
+    // 患者微信，姓名
+    let where1: any = null;
+    if (ctx.query.searchCustomer) {
+      where1 = {
         [Op.or]: [
-          { name: { [Op.like]: "%" + search + "%" } },
-          { wechat: { [Op.like]: "%" + search + "%" } },
+          { name: { [Op.like]: "%" + ctx.query.searchCustomer + "%" } },
+          { wechat: { [Op.like]: "%" + ctx.query.searchCustomer + "%" } },
         ],
       };
     }
-    if (where1 || where1) {
-      query["where"] = Object.assign(where1, where2);
+    // 疾病类型
+    if (ctx.query.searchDisease) {
+      where.disease = { [Op.like]: "%" + ctx.query.searchDisease + "%" };
     }
+    // 客服姓名
+    if (ctx.query.searchUserName) {
+      where.user_id = ctx.query.searchUserName;
+    }
+    // 客服微信
+    if (ctx.query.searchUserWechat) {
+      where.customer_wechat = ctx.query.searchUserWechat;
+    }
+    // 成交，未成交
+    if (ctx.query.searchDeal) {
+      where.deal = ctx.query.searchDeal;
+    }
+    // 备注
+    if (ctx.query.searchRemark) {
+      where.remark = { [Op.like]: "%" + ctx.query.searchRemark + "%" };
+    }
+    console.log("----start----->");
+    console.log(where);
+    console.log(query["where"]);
+    console.log(!_.isEmpty(where));
+    console.log(!_.isEmpty(where1));
+    console.log("----end----->");
+    if (!_.isEmpty(where)) {
+      Object.assign(query.where, where);
+    }
+    if (where1 != null) {
+      Object.assign(query.where, where1);
+    }
+    console.log("----start2----->");
+    console.log(where1);
+    console.log(where1 == null);
+    console.log(where1 == undefined);
+    console.log(_.isEmpty(where1));
+    console.log(query["where"]);
+    console.log("----end2----->");
 
     const order = ctx.query.sort;
-
-    if (order != null) {
-      query["order"] = [order.split(",")];
+    if (!_.isEmpty(order)) {
+      query.order = [order.split(",")];
     } else {
-      query["order"] = [["id", "DESC"]];
+      query.order = [["id", "DESC"]];
     }
     console.log(query);
     const count = await ctx.model.Customer.count(query);

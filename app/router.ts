@@ -59,4 +59,5 @@ export default (app: Application) => {
   router.resources("wechat", "/wechat", controller.wechat);
   router.resources("disease", "/disease", controller.disease);
   router.get("/diseaseList", controller.disease.list);
+  router.get("/usersList", controller.users.list);
 };

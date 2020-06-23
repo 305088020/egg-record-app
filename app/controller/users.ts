@@ -32,6 +32,11 @@ export default class UserController extends Controller {
     // ctx.body = await ctx.service.test.findByUsername("nihao");
   }
 
+  async list() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.model.User.findAll();
+  }
+
   async show() {
     const ctx = this.ctx;
     ctx.body = await ctx.model.User.findByPk(toInt(ctx.params.id));

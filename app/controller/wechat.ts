@@ -1,4 +1,6 @@
 import { Controller } from "egg";
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 function toInt(str) {
   if (typeof str === "number") return str;
@@ -13,9 +15,16 @@ export default class WechatController extends Controller {
     if (userId) {
       ctx.body = await ctx.model.Wechat.findAll({ where: { user_id: userId } });
     } else {
-      ctx.body = await ctx.model.Wechat.findAll();
+      ctx.body = await ctx.model.Wechat.findAll({
+        where: {
+          user_id: {
+            [Op.ne]: null,
+          },
+        },
+      });
     }
   }
+
   async create() {
     const ctx = this.ctx;
     const { wechat, user_id } = ctx.request.body;
