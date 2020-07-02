@@ -23,6 +23,7 @@ module.exports = (app) => {
     user_id: INTEGER,
     created_at: DATE,
     updated_at: DATE,
+    add_wechat_date: DATE,
   });
 
   Customer.associate = function () {

@@ -81,25 +81,13 @@ export default class CustomerController extends Controller {
     if (ctx.query.searchRemark) {
       where.remark = { [Op.like]: "%" + ctx.query.searchRemark + "%" };
     }
-    console.log("----start----->");
-    console.log(where);
-    console.log(query["where"]);
-    console.log(!_.isEmpty(where));
-    console.log(!_.isEmpty(where1));
-    console.log("----end----->");
+
     if (!_.isEmpty(where)) {
       Object.assign(query.where, where);
     }
     if (where1 != null) {
       Object.assign(query.where, where1);
     }
-    console.log("----start2----->");
-    console.log(where1);
-    console.log(where1 == null);
-    console.log(where1 == undefined);
-    console.log(_.isEmpty(where1));
-    console.log(query["where"]);
-    console.log("----end2----->");
 
     const order = ctx.query.sort;
     if (!_.isEmpty(order)) {
@@ -133,6 +121,7 @@ export default class CustomerController extends Controller {
       deal,
       remark,
       date,
+      add_wechat_date,
       user_id,
     } = ctx.request.body;
     console.log(name + user_id);
@@ -157,6 +146,7 @@ export default class CustomerController extends Controller {
       deal,
       remark,
       date,
+      add_wechat_date,
       user_id,
     });
     ctx.status = 201;
@@ -182,7 +172,9 @@ export default class CustomerController extends Controller {
       deal,
       remark,
       date,
+      add_wechat_date,
     } = ctx.request.body;
+    console.log("---->" + add_wechat_date);
     // 微信一样的不能添加
     const someOneCount = await ctx.model.Customer.count({
       where: {
@@ -207,6 +199,7 @@ export default class CustomerController extends Controller {
       deal,
       remark,
       date,
+      add_wechat_date,
     });
     ctx.body = customer;
   }
@@ -301,6 +294,7 @@ export default class CustomerController extends Controller {
         address: element.address,
         disease: element.disease,
         wechat: element.wechat,
+        add_wechat_date: element.add_wechat_date,
         customer_wechat: element.customer_wechat,
         userName: element.user.name,
         deal: element.deal,
@@ -368,6 +362,7 @@ export default class CustomerController extends Controller {
         },
         { name: "疾病类型", width: 20, filterButton: true },
         { name: "患者微信", width: 20, filterButton: true },
+        { name: "添加微信时间", width: 20, filterButton: true },
         {
           name: "客服微信",
           width: 20,
@@ -389,10 +384,11 @@ export default class CustomerController extends Controller {
     sheet.getColumn(5).width = 20;
     sheet.getColumn(6).width = 20;
     sheet.getColumn(7).width = 20;
-    sheet.getColumn(8).width = 10;
+    sheet.getColumn(8).width = 20;
     sheet.getColumn(9).width = 10;
-    sheet.getColumn(10).width = 50;
-    sheet.getColumn(11).width = 20;
+    sheet.getColumn(10).width = 10;
+    sheet.getColumn(11).width = 50;
+    sheet.getColumn(12).width = 20;
 
     const center = {
       vertical: "middle",
