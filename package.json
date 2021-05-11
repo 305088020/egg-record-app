@@ -34,7 +34,7 @@
     "egg-view-assets": "^1.6.0",
     "egg-view-nunjucks": "^2.2.0",
     "exceljs": "^4.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mysql2": "^2.1.0",
     "reflect-metadata": "^0.1.13",
     "sequelize-typescript": "^1.1.0"
